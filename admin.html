@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Royale Admin</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+    <div class="container">
+
+        <h1>Quiz Royale Admin</h1>
+        <p class="subtitle">Player Management</p>
+
+        <div class="stats">
+
+            <div class="card">
+                <h3>Level</h3>
+                <p id="level">1</p>
+            </div>
+
+            <div class="card">
+                <h3>XP</h3>
+                <p id="xp">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Coins</h3>
+                <p id="coins">100</p>
+            </div>
+
+            <div class="card">
+                <h3>Rank</h3>
+                <p id="rank">Bronze I</p>
+            </div>
+
+            <div class="card">
+                <h3>Completed</h3>
+                <p id="completed">0</p>
+            </div>
+
+        </div>
+
+
+        <!-- COINS -->
+
+        <div class="section">
+
+            <h2>Coins</h2>
+
+            <div class="buttons">
+                <button onclick="addCoins(100)">+100</button>
+                <button onclick="addCoins(500)">+500</button>
+                <button onclick="addCoins(1000)">+1000</button>
+                <button onclick="addCoins(10000)">+10000</button>
+            </div>
+
+            <div class="custom">
+
+                <input type="number" id="customCoins" placeholder="Coin amount">
+
+                <button onclick="addCustomCoins()">
+                    Add Coins
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- XP -->
+
+        <div class="section">
+
+            <h2>XP</h2>
+
+            <div class="buttons">
+                <button onclick="addXP(100)">+100 XP</button>
+                <button onclick="addXP(500)">+500 XP</button>
+                <button onclick="addXP(1000)">+1000 XP</button>
+                <button onclick="addXP(10000)">+10000 XP</button>
+            </div>
+
+            <div class="custom">
+
+                <input type="number" id="customXP" placeholder="XP amount">
+
+                <button onclick="addCustomXP()">
+                    Add XP
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- LEVEL -->
+
+        <div class="section">
+
+            <h2>Level</h2>
+
+            <div class="custom">
+
+                <input type="number" id="levelInput" min="1" max="100" placeholder="1 - 100">
+
+                <button onclick="changeLevel()">
+                    Change Level
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- RANK -->
+
+        <div class="section">
+
+            <h2>Rank</h2>
+
+            <select id="rankSelect">
+
+                <option value="Bronze I">Bronze I</option>
+                <option value="Bronze II">Bronze II</option>
+                <option value="Bronze III">Bronze III</option>
+
+                <option value="Silver I">Silver I</option>
+                <option value="Silver II">Silver II</option>
+                <option value="Silver III">Silver III</option>
+
+                <option value="Gold I">Gold I</option>
+                <option value="Gold II">Gold II</option>
+                <option value="Gold III">Gold III</option>
+
+                <option value="Platinum I">Platinum I</option>
+                <option value="Platinum II">Platinum II</option>
+                <option value="Platinum III">Platinum III</option>
+
+                <option value="Diamond I">Diamond I</option>
+                <option value="Diamond II">Diamond II</option>
+                <option value="Diamond III">Diamond III</option>
+
+                <option value="Master I">Master I</option>
+                <option value="Master II">Master II</option>
+                <option value="Master III">Master III</option>
+
+                <option value="Grandmaster">Grandmaster</option>
+                <option value="Legend">Legend</option>
+
+            </select>
+
+            <button onclick="changeRank()">
+                Change Rank
+            </button>
+
+            <p class="info">
+                Rank is controlled by XP in the main game.
+                Changing rank will automatically give the required XP.
+            </p>
+
+        </div>
+
+
+        <!-- ITEM -->
+
+        <div class="section">
+
+            <h2>Give Free Item</h2>
+
+            <select id="itemSelect">
+            </select>
+
+            <div class="custom">
+
+                <input type="number" id="itemAmount" value="1" min="1">
+
+                <button onclick="giveItem()">
+                    Give Item
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- INVENTORY -->
+
+        <div class="section">
+
+            <h2>Player Inventory</h2>
+
+            <div id="inventory" class="inventory">
+            </div>
+
+        </div>
+
+
+        <!-- SAVE -->
+
+        <div class="section">
+
+            <h2>Save</h2>
+
+            <div class="buttons">
+
+                <button onclick="saveGame()">
+                    Save
+                </button>
+
+                <button onclick="loadGame()">
+                    Reload
+                </button>
+
+                <button class="danger" onclick="resetGame()">
+                    Reset Progress
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div id="message"></div>
+
+    </div>
+
+
+    <script src="admin.js"></script>
+ <a href="./index (1).html"><button>back</button></a>
+</body>
+
+</html>

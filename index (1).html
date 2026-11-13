@@ -1,0 +1,4163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Quiz Royale - 100 Levels</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      min-height: 100vh;
+      color: white;
+      background: radial-gradient(circle at top,
+          #263b67 0,
+          #111827 42%,
+          #070b12 100%);
+
+      transition: background 0.5s;
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .top {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+
+      background: rgba(7, 11, 18, .94);
+
+      backdrop-filter: blur(10px);
+
+      border-bottom: 1px solid #334155;
+
+      padding: 12px 18px;
+    }
+
+    .topbar {
+      max-width: 1200px;
+      margin: auto;
+
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 900;
+      color: #facc15;
+      margin-right: auto;
+    }
+
+    .stat {
+      background: #182235;
+      border: 1px solid #334155;
+
+      padding: 8px 12px;
+
+      border-radius: 10px;
+
+      font-weight: 700;
+    }
+
+    .stat span {
+      color: #facc15;
+    }
+
+    .nav {
+      display: flex;
+      gap: 8px;
+
+      max-width: 1200px;
+      margin: 10px auto 0;
+
+      flex-wrap: wrap;
+    }
+
+    .nav button,
+    .primary,
+    .answer,
+    .shop-btn,
+    .secondary {
+      border: 0;
+      border-radius: 10px;
+
+      padding: 11px 14px;
+
+      background: #26354f;
+      color: white;
+
+      font-weight: 800;
+    }
+
+    .nav button:hover,
+    .shop-btn:hover,
+    .secondary:hover {
+      background: #385176;
+    }
+
+    .nav button.active,
+    .primary {
+      background: #eab308;
+      color: #111827;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 25px auto;
+      padding: 0 16px;
+    }
+
+    .panel {
+      background: rgba(15, 23, 42, .88);
+
+      border: 1px solid #334155;
+      border-radius: 18px;
+
+      padding: 22px;
+
+      box-shadow: 0 15px 50px #0005;
+    }
+
+    h1 {
+      font-size: 34px;
+      margin-bottom: 8px;
+    }
+
+    h2 {
+      margin-bottom: 12px;
+    }
+
+    .muted {
+      color: #94a3b8;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.4fr .8fr;
+      gap: 18px;
+    }
+
+    .big-number {
+      font-size: 64px;
+      font-weight: 900;
+      color: #facc15;
+    }
+
+    .progress {
+      height: 14px;
+
+      background: #111827;
+
+      border-radius: 99px;
+
+      overflow: hidden;
+
+      margin: 12px 0;
+    }
+
+    .progress i {
+      display: block;
+
+      height: 100%;
+
+      background: linear-gradient(90deg,
+          #eab308,
+          #22c55e);
+
+      width: 0;
+
+      transition: width .3s;
+    }
+
+    .rankbox {
+      border: 1px solid #475569;
+
+      border-radius: 16px;
+
+      padding: 18px;
+
+      text-align: center;
+    }
+
+    .rank {
+      font-size: 30px;
+      font-weight: 900;
+      color: #facc15;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+
+      flex-wrap: wrap;
+
+      margin-top: 18px;
+    }
+
+    .primary {
+      background: #22c55e;
+      color: #07110a;
+    }
+
+    .secondary {
+      background: #334155;
+      color: white;
+    }
+
+    .quiz-head {
+      display: flex;
+
+      justify-content: space-between;
+
+      gap: 10px;
+
+      align-items: center;
+    }
+
+    .question {
+      font-size: 24px;
+
+      font-weight: 800;
+
+      line-height: 1.35;
+
+      margin: 25px 0;
+    }
+
+    .answers {
+      display: grid;
+
+      grid-template-columns: 1fr 1fr;
+
+      gap: 12px;
+    }
+
+    .answer {
+      text-align: left;
+
+      background: #1e293b;
+
+      border: 1px solid #475569;
+
+      min-height: 58px;
+    }
+
+    .answer:hover {
+      border-color: #facc15;
+      transform: translateY(-1px);
+    }
+
+    .answer.correct {
+      background: #166534;
+      border-color: #22c55e;
+    }
+
+    .answer.wrong {
+      background: #991b1b;
+      border-color: #ef4444;
+    }
+
+    .answer:disabled {
+      cursor: not-allowed;
+    }
+
+    .feedback {
+      margin-top: 16px;
+
+      padding: 14px;
+
+      border-radius: 10px;
+
+      background: #172033;
+
+      color: #cbd5e1;
+    }
+
+    .help-box {
+      margin-top: 18px;
+
+      padding: 14px;
+
+      border: 1px solid #334155;
+
+      border-radius: 12px;
+
+      background: #111827;
+    }
+
+    .help-buttons {
+      display: flex;
+
+      flex-wrap: wrap;
+
+      gap: 8px;
+
+      margin-top: 10px;
+    }
+
+    .help-buttons button {
+      border: 1px solid #475569;
+
+      background: #26354f;
+
+      color: white;
+
+      border-radius: 8px;
+
+      padding: 8px 10px;
+    }
+
+    .help-buttons button:hover {
+      background: #3b82f6;
+    }
+
+    .timer {
+      color: #facc15;
+
+      font-size: 20px;
+
+      font-weight: 900;
+    }
+
+    .shop-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(auto-fill, minmax(185px, 1fr));
+
+      gap: 12px;
+    }
+
+    .item {
+      background: #172033;
+
+      border: 1px solid #334155;
+
+      border-radius: 14px;
+
+      padding: 14px;
+
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 8px;
+
+      min-height: 185px;
+    }
+
+    .item-icon {
+      font-size: 38px;
+    }
+
+    .item h3 {
+      font-size: 16px;
+    }
+
+    .price {
+      color: #facc15;
+      font-weight: 900;
+    }
+
+    .owned {
+      color: #4ade80;
+      font-size: 13px;
+    }
+
+    .shop-btn {
+      margin-top: auto;
+    }
+
+    .shop-btn:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    .levels {
+      display: grid;
+
+      grid-template-columns:
+        repeat(auto-fill, minmax(105px, 1fr));
+
+      gap: 8px;
+    }
+
+    .level {
+      padding: 12px;
+
+      border-radius: 10px;
+
+      background: #172033;
+
+      border: 1px solid #334155;
+
+      text-align: center;
+
+      cursor: pointer;
+    }
+
+    .level:hover {
+      border-color: #facc15;
+    }
+
+    .level.done {
+      border-color: #22c55e;
+      background: #12301d;
+    }
+
+    .level.current {
+      border-color: #facc15;
+    }
+
+    .profile {
+      display: grid;
+
+      grid-template-columns: 1fr 1fr;
+
+      gap: 12px;
+    }
+
+    .card {
+      background: #172033;
+
+      border: 1px solid #334155;
+
+      border-radius: 14px;
+
+      padding: 15px;
+    }
+
+    .inventory {
+      display: flex;
+
+      flex-wrap: wrap;
+
+      gap: 8px;
+
+      margin-top: 10px;
+    }
+
+    .tag {
+      padding: 9px 12px;
+
+      border-radius: 10px;
+
+      background: #334155;
+
+      color: white;
+
+      border: 0;
+    }
+
+    .tag:hover {
+      background: #475569;
+    }
+
+    .profile-look {
+      margin-top: 15px;
+
+      padding: 18px;
+
+      border-radius: 14px;
+
+      border: 1px solid #475569;
+
+      background: #0f172a;
+    }
+
+    /* EFFECTS */
+
+    .effects-window {
+      position: fixed;
+
+      top: 0;
+      left: 0;
+
+      width: 100%;
+      height: 100%;
+
+      background: rgba(0, 0, 0, .75);
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      z-index: 100;
+    }
+
+    .effects-window.hidden {
+      display: none !important;
+    }
+
+    .effects-box {
+      width: 520px;
+
+      max-width: 92%;
+
+      max-height: 80vh;
+
+      background: #111827;
+
+      border: 1px solid #475569;
+
+      border-radius: 18px;
+
+      padding: 20px;
+
+      overflow-y: auto;
+
+      box-shadow: 0 20px 60px #000;
+    }
+
+    .effects-header {
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: center;
+
+      margin-bottom: 15px;
+    }
+
+    .close-effect {
+      border: 0;
+
+      background: #991b1b;
+
+      color: white;
+
+      padding: 8px 13px;
+
+      border-radius: 8px;
+
+      font-weight: bold;
+
+      cursor: pointer;
+    }
+
+    .close-effect:hover {
+      background: #dc2626;
+    }
+
+    .effect-count {
+      background: #172033;
+
+      border: 1px solid #334155;
+
+      padding: 12px;
+
+      border-radius: 10px;
+
+      margin-bottom: 12px;
+
+      font-weight: bold;
+    }
+
+    #effectCount {
+      color: #facc15;
+    }
+
+    .effect-row {
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      background: #172033;
+
+      border: 1px solid #334155;
+
+      padding: 12px;
+
+      border-radius: 10px;
+
+      margin-bottom: 8px;
+    }
+
+    .effect-name {
+      font-weight: bold;
+    }
+
+    .effect-status {
+      font-size: 13px;
+
+      color: #94a3b8;
+
+      margin-top: 3px;
+    }
+
+    .toggle {
+      width: 52px;
+
+      height: 28px;
+
+      border: 0;
+
+      border-radius: 20px;
+
+      background: #475569;
+
+      position: relative;
+
+      cursor: pointer;
+    }
+
+    .toggle::after {
+      content: "";
+
+      position: absolute;
+
+      width: 20px;
+      height: 20px;
+
+      background: white;
+
+      border-radius: 50%;
+
+      top: 4px;
+      left: 4px;
+
+      transition: .2s;
+    }
+
+    .toggle.on {
+      background: #22c55e;
+    }
+
+    .toggle.on::after {
+      left: 28px;
+    }
+
+    .toast {
+      position: fixed;
+
+      right: 18px;
+
+      bottom: 18px;
+
+      background: #111827;
+
+      border: 1px solid #475569;
+
+      padding: 13px 16px;
+
+      border-radius: 10px;
+
+      display: none;
+
+      z-index: 200;
+    }
+
+    @media(max-width:750px) {
+
+      .hero,
+      .profile {
+        grid-template-columns: 1fr;
+      }
+
+      .answers {
+        grid-template-columns: 1fr;
+      }
+
+      .big-number {
+        font-size: 48px;
+      }
+
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="top">
+
+    <div class="topbar">
+
+      <div class="logo">
+        QUIZ ROYALE
+      </div>
+
+      <div class="stat">
+        Rank:
+        <span id="rank">Bronze I</span>
+      </div>
+
+      <div class="stat">
+        Level:
+        <span id="level">1</span>
+      </div>
+
+      <div class="stat">
+        Coins:
+        <span id="coins">100</span>
+      </div>
+
+    </div>
+
+    <div class="nav">
+
+      <button class="active" onclick="showPage('home',this)">
+        Play
+      </button>
+
+      <button onclick="showPage('levels',this)">
+        100 Levels
+      </button>
+
+      <button onclick="showPage('shop',this)">
+        Shop 100+
+      </button>
+
+      <button onclick="showPage('profile',this)">
+        Profile
+      </button>
+
+      <button onclick="openEffects()">
+        Effects
+      </button>
+
+      <button onclick="openAdmin()">
+        Admin Cabinet
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <main>
+
+    <!-- HOME -->
+
+    <section id="home" class="page">
+
+      <div class="hero">
+
+        <div class="panel">
+
+          <h1>
+            Quiz Battle
+          </h1>
+
+          <p class="muted">
+            Beat 100 levels. Earn coins,
+            gain XP, climb ranks and unlock rewards.
+          </p>
+
+          <div class="big-number" id="homeLevel">
+            LEVEL 1
+          </div>
+
+          <div class="progress">
+            <i id="xpbar"></i>
+          </div>
+
+          <p id="xptext" class="muted">
+            0 XP
+          </p>
+
+          <div class="actions">
+
+            <button class="primary" onclick="startQuiz()">
+              Start Test
+            </button>
+
+            <button class="secondary" onclick="showPage('shop')">
+              Open Shop
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div class="rankbox">
+
+          <div class="muted">
+            CURRENT RANK
+          </div>
+
+          <div class="rank" id="rankBig">
+            Bronze I
+          </div>
+
+          <p class="muted">
+            Keep winning to rank up.
+          </p>
+
+          <div class="progress">
+            <i id="rankbar"></i>
+          </div>
+
+        </div>
+
+      </div>
+
+      <br>
+
+      <div class="panel">
+
+        <h2>
+          Quiz Royale
+        </h2>
+
+        <p class="muted">
+          Complete levels to earn coins and XP.
+          Your progress is automatically saved.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- QUIZ -->
+
+    <section id="quiz" class="page hidden">
+
+      <div class="panel">
+
+        <div class="quiz-head">
+
+          <h2 id="qLevel">
+            Level 1
+          </h2>
+
+          <div>
+
+            <span class="timer">
+              Time:
+              <span id="timer">
+                30
+              </span>
+            </span>
+
+            <div class="stat">
+              Coins:
+              <span id="qCoins">
+                100
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="progress">
+          <i id="qbar"></i>
+        </div>
+
+        <div class="question" id="question">
+          Loading...
+        </div>
+
+        <div class="answers" id="answers">
+        </div>
+
+
+        <div class="help-box">
+
+          <b>
+            Question Help
+          </b>
+
+          <div class="help-buttons" id="helpButtons">
+          </div>
+
+        </div>
+
+
+        <div id="feedback" class="feedback hidden">
+        </div>
+
+
+        <div class="actions">
+
+          <button id="nextBtn" class="primary hidden" onclick="nextQuestion()">
+            Next Question
+          </button>
+
+          <button class="secondary" onclick="exitQuiz()">
+            Exit
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- LEVELS -->
+
+    <section id="levels" class="page hidden">
+
+      <div class="panel">
+
+        <h1>
+          100 Levels
+        </h1>
+
+        <p class="muted">
+          Complete levels in order.
+          Each level contains 5 questions.
+        </p>
+
+        <br>
+
+        <div class="levels" id="levelGrid">
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- SHOP -->
+
+    <section id="shop" class="page hidden">
+
+      <div class="panel">
+
+        <h1>
+          Reward Shop
+        </h1>
+
+        <p class="muted">
+          Buy items and use them from your inventory.
+        </p>
+
+        <br>
+
+        <div class="shop-grid" id="shopGrid">
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- PROFILE -->
+
+    <section id="profile" class="page hidden">
+
+      <div class="panel">
+
+        <h1>
+          Profile
+        </h1>
+
+        <div class="profile">
+
+          <div class="card">
+            <b>Level</b>
+            <h2 id="pLevel">1</h2>
+            <p class="muted">
+              XP:
+              <span id="pXP">0</span>
+            </p>
+          </div>
+
+          <div class="card">
+            <b>Rank</b>
+            <h2 id="pRank">
+              Bronze I
+            </h2>
+          </div>
+
+          <div class="card">
+            <b>Coins</b>
+            <h2 id="pCoins">
+              100
+            </h2>
+          </div>
+
+          <div class="card">
+            <b>Items</b>
+            <h2 id="pItems">
+              0
+            </h2>
+          </div>
+
+        </div>
+
+
+        <div class="profile-look">
+
+          <h2>
+            Player Look
+          </h2>
+
+          <p>
+            Avatar:
+            <b id="pAvatar">
+              Basic Avatar
+            </b>
+          </p>
+
+          <p>
+            Frame:
+            <b id="pFrame">
+              Wooden Frame
+            </b>
+          </p>
+
+          <p>
+            Title:
+            <b id="pTitle">
+              Starter Title
+            </b>
+          </p>
+
+          <p>
+            Crown:
+            <b id="pCrown">
+              None
+            </b>
+          </p>
+
+          <p>
+            Emblem:
+            <b id="pEmblem">
+              None
+            </b>
+          </p>
+
+          <p>
+            Banner:
+            <b id="pBanner">
+              None
+            </b>
+          </p>
+
+          <p>
+            Background:
+            <b id="pBackground">
+              Default
+            </b>
+          </p>
+
+        </div>
+
+
+        <br>
+
+        <h2>
+          Inventory
+        </h2>
+
+        <div id="inventory" class="inventory">
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- EFFECTS WINDOW -->
+
+  <div id="effectsWindow" class="effects-window hidden">
+
+    <div class="effects-box">
+
+      <div class="effects-header">
+
+        <div>
+
+          <h2>
+            Effects
+          </h2>
+
+          <p class="muted">
+            Turn your effects ON or OFF
+          </p>
+
+        </div>
+
+        <button class="close-effect" onclick="closeEffects()">
+          X
+        </button>
+
+      </div>
+
+
+      <div class="effect-count">
+
+        Active Effects:
+        <span id="effectCount">
+          0 / 19
+        </span>
+
+      </div>
+
+
+      <div id="effectsList">
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div id="toast" class="toast">
+  </div>
+
+
+  <script>
+
+    /* =========================
+       QUESTIONS
+    ========================= */
+
+    const questions = [
+
+      [
+        "What is the capital of France?",
+        "Paris",
+        "London",
+        "Rome",
+        "Berlin"
+      ],
+
+      [
+        "Which planet is known as the Red Planet?",
+        "Mars",
+        "Venus",
+        "Jupiter",
+        "Mercury"
+      ],
+
+      [
+        "What is 12 × 8?",
+        "96",
+        "86",
+        "108",
+        "88"
+      ],
+
+      [
+        "Which language is mainly used to structure web pages?",
+        "HTML",
+        "CSS",
+        "Python",
+        "SQL"
+      ],
+
+      [
+        "What does CPU stand for?",
+        "Central Processing Unit",
+        "Computer Personal Unit",
+        "Central Program Utility",
+        "Core Processing User"
+      ],
+
+      [
+        "Which ocean is the largest?",
+        "Pacific Ocean",
+        "Atlantic Ocean",
+        "Indian Ocean",
+        "Arctic Ocean"
+      ],
+
+      [
+        "How many days are in a leap year?",
+        "366",
+        "365",
+        "364",
+        "360"
+      ],
+
+      [
+        "Which gas do plants absorb from the air?",
+        "Carbon dioxide",
+        "Oxygen",
+        "Nitrogen",
+        "Hydrogen"
+      ],
+
+      [
+        "What is 144 ÷ 12?",
+        "12",
+        "10",
+        "14",
+        "16"
+      ],
+
+      [
+        "Which file extension is commonly used for JavaScript?",
+        ".js",
+        ".java",
+        ".html",
+        ".css"
+      ],
+
+      [
+        "Which is the fastest land animal?",
+        "Cheetah",
+        "Lion",
+        "Horse",
+        "Wolf"
+      ],
+
+      [
+        "What is the square root of 81?",
+        "9",
+        "8",
+        "7",
+        "6"
+      ],
+
+      [
+        "Which continent is Egypt in?",
+        "Africa",
+        "Asia",
+        "Europe",
+        "South America"
+      ],
+
+      [
+        "What does CSS mainly control?",
+        "Web page style",
+        "Database storage",
+        "Server hardware",
+        "Audio files"
+      ],
+
+      [
+        "Which number is prime?",
+        "17",
+        "21",
+        "27",
+        "33"
+      ],
+
+      [
+        "What is the largest mammal?",
+        "Blue whale",
+        "Elephant",
+        "Giraffe",
+        "Shark"
+      ],
+
+      [
+        "Which device is used to type text?",
+        "Keyboard",
+        "Monitor",
+        "Speaker",
+        "Router"
+      ],
+
+      [
+        "What is 15% of 200?",
+        "30",
+        "20",
+        "25",
+        "35"
+      ],
+
+      [
+        "Which planet is closest to the Sun?",
+        "Mercury",
+        "Earth",
+        "Mars",
+        "Saturn"
+      ],
+
+      [
+        "What does URL mean?",
+        "Uniform Resource Locator",
+        "Universal Reading Link",
+        "User Route List",
+        "United Resource Language"
+      ]
+
+    ];
+
+
+    /* =========================
+       SHOP ITEMS
+    ========================= */
+
+    const itemNames = [
+
+      "Starter Badge",
+      "Bronze Badge",
+      "Silver Badge",
+      "Gold Badge",
+      "Diamond Badge",
+      "Ruby Badge",
+      "Emerald Badge",
+      "Sapphire Badge",
+      "Crown Badge",
+      "Legend Badge",
+
+      "Energy Drink",
+      "XP Boost",
+      "Coin Boost",
+      "Shield",
+      "Lucky Token",
+      "Mystery Box",
+      "Treasure Chest",
+      "Golden Key",
+      "Magic Key",
+      "Battle Ticket",
+
+      "Fire Emblem",
+      "Ice Emblem",
+      "Thunder Emblem",
+      "Earth Emblem",
+      "Wind Emblem",
+      "Water Emblem",
+      "Star Emblem",
+      "Moon Emblem",
+      "Sun Emblem",
+      "Galaxy Emblem",
+
+      "Wooden Frame",
+      "Steel Frame",
+      "Golden Frame",
+      "Neon Frame",
+      "Shadow Frame",
+      "Royal Frame",
+      "Dragon Frame",
+      "Phoenix Frame",
+      "Titan Frame",
+      "Galaxy Frame",
+
+      "Basic Avatar",
+      "Cool Avatar",
+      "Pro Avatar",
+      "Elite Avatar",
+      "Master Avatar",
+      "Champion Avatar",
+      "Legend Avatar",
+      "Cyber Avatar",
+      "Ninja Avatar",
+      "Knight Avatar",
+
+      "Red Banner",
+      "Blue Banner",
+      "Green Banner",
+      "Purple Banner",
+      "Gold Banner",
+      "Black Banner",
+      "White Banner",
+      "Fire Banner",
+      "Ice Banner",
+      "Galaxy Banner",
+
+      "Small Chest",
+      "Medium Chest",
+      "Large Chest",
+      "Royal Chest",
+      "Epic Chest",
+      "Legend Chest",
+      "Mini Crate",
+      "Mega Crate",
+      "Ultra Crate",
+      "Diamond Crate",
+
+      "Speed Card",
+      "Power Card",
+      "Defense Card",
+      "Focus Card",
+      "Wisdom Card",
+      "Lucky Card",
+      "Double XP Card",
+      "Double Coin Card",
+      "Triple Coin Card",
+      "Skip Card",
+
+      "Bronze Crown",
+      "Silver Crown",
+      "Gold Crown",
+      "Crystal Crown",
+      "Fire Crown",
+      "Ice Crown",
+      "Thunder Crown",
+      "Dragon Crown",
+      "Phoenix Crown",
+      "Galaxy Crown",
+
+      "Starter Title",
+      "Rookie Title",
+      "Fighter Title",
+      "Hunter Title",
+      "Warrior Title",
+      "Elite Title",
+      "Master Title",
+      "Champion Title",
+      "Legend Title",
+      "King Title",
+
+      "Common Pet",
+      "Fox Pet",
+      "Wolf Pet",
+      "Eagle Pet",
+      "Dragon Pet",
+      "Robot Pet",
+      "Ninja Pet",
+      "Phoenix Pet",
+      "Crystal Pet",
+      "Galaxy Pet",
+
+      "Small Medal",
+      "Victory Medal",
+      "Win Medal",
+      "Top Medal",
+      "Pro Medal",
+      "Elite Medal",
+      "Master Medal",
+      "Legend Medal",
+      "Royal Medal",
+      "Ultimate Medal",
+
+      "Hint Card",
+      "50/50 Card",
+      "Skip Question",
+      "Extra Time",
+      "Reveal Answer",
+      "Remove One Answer",
+      "Second Chance",
+      "Freeze Timer",
+      "Question Swap",
+      "Smart Hint",
+      "Expert Help",
+      "Brain Boost",
+      "Answer Shield",
+      "Rescue Card",
+      "Master Hint",
+      "Perfect Chance",
+      "Last Chance",
+
+      "Galaxy Background",
+      "Space Background",
+      "Neon Background",
+      "Fire Background",
+      "Ice Background",
+      "Ocean Background",
+      "Forest Background",
+      "Sunset Background",
+      "Night Background",
+      "Stars Background",
+      "Cyber Background",
+      "Royal Background",
+      "Diamond Background",
+
+      "Purple Pattern",
+      "Blue Pattern",
+      "Red Pattern",
+      "Green Pattern",
+      "Rainbow Pattern",
+      "Dark Pattern",
+
+      "Golden Theme",
+      "Legend Theme",
+      "Royal Theme",
+      "Dragon Theme",
+      "Phoenix Theme",
+      "Lightning Theme",
+      "Shadow Theme",
+      "Crystal Theme",
+      "Cyber Theme",
+      "Ultimate Theme"
+
+    ];
+
+
+    const icons = [
+      "🎖️",
+      "🧪",
+      "⚡",
+      "🛡️",
+      "🍀",
+      "📦",
+      "💎",
+      "🔑",
+      "🔥",
+      "❄️",
+      "🌟",
+      "👑",
+      "🐉",
+      "🦊",
+      "🤖",
+      "🏆",
+      "💡",
+      "⏱️",
+      "🌌",
+      "🎨"
+    ];
+
+
+    /* =========================
+       EFFECTS
+    ========================= */
+
+    const effectNames = [
+
+      "Hint Effect",
+      "50/50 Effect",
+      "Skip Effect",
+      "Extra Time Effect",
+      "Reveal Answer Effect",
+      "Remove Answer Effect",
+      "Second Chance Effect",
+      "Shield Effect",
+      "Freeze Timer Effect",
+      "Question Swap Effect",
+      "Coin Effect",
+      "XP Effect",
+      "Lucky Effect",
+      "Mystery Box Effect",
+      "Chest Effect",
+      "Pet Effect",
+      "Background Effect",
+      "Pattern Effect",
+      "Theme Effect"
+
+    ];
+
+
+    /* =========================
+       SAVE
+    ========================= */
+
+    const SAVE_KEY = "quizRoyaleSave";
+
+    let state =
+      JSON.parse(
+        localStorage.getItem(SAVE_KEY) || "null"
+      )
+      ||
+      {
+
+        level: 1,
+        xp: 0,
+        coins: 100,
+        completed: 0,
+
+        inventory: [],
+        owned: {},
+
+        avatar: "Basic Avatar",
+        frame: "Wooden Frame",
+        title: "Starter Title",
+
+        crown: "",
+        emblem: "",
+        banner: "",
+        background: "",
+
+        secondChance: false,
+        shield: false,
+
+        pets: [],
+        badges: [],
+        medals: [],
+
+        effects: {}
+
+      };
+
+
+    /* OLD SAVE COMPATIBILITY */
+
+    if (!Array.isArray(state.inventory))
+      state.inventory = [];
+
+    if (!state.owned)
+      state.owned = {};
+
+    if (!state.pets)
+      state.pets = [];
+
+    if (!state.badges)
+      state.badges = [];
+
+    if (!state.medals)
+      state.medals = [];
+
+    if (!state.effects)
+      state.effects = {};
+
+    effectNames.forEach(function (effect) {
+
+      if (state.effects[effect] === undefined) {
+        state.effects[effect] = true;
+      }
+
+    });
+
+
+    /* =========================
+       VARIABLES
+    ========================= */
+
+    let currentLevel = 1;
+
+    let currentQ = 0;
+
+    let score = 0;
+
+    let sessionQuestions = [];
+
+    let timeLeft = 30;
+
+    let timerInterval = null;
+
+    let questionAnswered = false;
+
+
+    /* =========================
+       RANKS
+    ========================= */
+
+    const ranks = [
+
+      ["Bronze I", 0],
+      ["Bronze II", 150],
+      ["Bronze III", 300],
+
+      ["Silver I", 500],
+      ["Silver II", 700],
+      ["Silver III", 900],
+
+      ["Gold I", 1150],
+      ["Gold II", 1400],
+      ["Gold III", 1700],
+
+      ["Platinum I", 2050],
+      ["Platinum II", 2400],
+      ["Platinum III", 2800],
+
+      ["Diamond I", 3250],
+      ["Diamond II", 3700],
+      ["Diamond III", 4200],
+
+      ["Master I", 4800],
+      ["Master II", 5500],
+      ["Master III", 6300],
+
+      ["Grandmaster", 7200],
+
+      ["Legend", 8500]
+
+    ];
+
+
+    /* =========================
+       SAVE
+    ========================= */
+
+    function save() {
+
+      localStorage.setItem(
+        SAVE_KEY,
+        JSON.stringify(state)
+      );
+
+      updateUI();
+
+    }
+
+
+    /* =========================
+       ADMIN
+    ========================= */
+
+    function openAdmin() {
+
+      window.location.href = "admin.html";
+
+    }
+
+
+    /* =========================
+       RANK
+    ========================= */
+
+    function getRank() {
+
+      let r = ranks[0];
+
+      for (const x of ranks) {
+
+        if (state.xp >= x[1]) {
+          r = x;
+        }
+
+      }
+
+      return r[0];
+
+    }
+
+
+    /* =========================
+       PAGE
+    ========================= */
+
+    function showPage(id, btn) {
+
+      document.querySelectorAll(".page")
+        .forEach(x =>
+          x.classList.add("hidden")
+        );
+
+      document.getElementById(id)
+        .classList.remove("hidden");
+
+
+      if (btn) {
+
+        document.querySelectorAll(".nav button")
+          .forEach(x =>
+            x.classList.remove("active")
+          );
+
+        btn.classList.add("active");
+
+      }
+
+
+      if (id === "levels")
+        renderLevels();
+
+      if (id === "shop")
+        renderShop();
+
+      if (id === "profile")
+        renderProfile();
+
+    }
+
+
+    /* =========================
+       UI
+    ========================= */
+
+    function updateUI() {
+
+      document.querySelectorAll(
+        "#coins,#qCoins,#pCoins"
+      )
+        .forEach(x =>
+          x.textContent = state.coins
+        );
+
+
+      document.querySelectorAll(
+        "#level,#pLevel"
+      )
+        .forEach(x =>
+          x.textContent = state.level
+        );
+
+
+      const rank = getRank();
+
+
+      document.querySelectorAll(
+        "#rank,#rankBig,#pRank"
+      )
+        .forEach(x =>
+          x.textContent = rank
+        );
+
+
+      document.getElementById("homeLevel")
+        .textContent =
+        "LEVEL " + state.level;
+
+
+      document.getElementById("xptext")
+        .textContent =
+        state.xp + " XP";
+
+
+      document.getElementById("pXP")
+        .textContent =
+        state.xp;
+
+
+      document.getElementById("pItems")
+        .textContent =
+        state.inventory.length;
+
+
+      document.getElementById("pAvatar")
+        .textContent =
+        state.avatar || "Basic Avatar";
+
+
+      document.getElementById("pFrame")
+        .textContent =
+        state.frame || "Wooden Frame";
+
+
+      document.getElementById("pTitle")
+        .textContent =
+        state.title || "Starter Title";
+
+
+      document.getElementById("pCrown")
+        .textContent =
+        state.crown || "None";
+
+
+      document.getElementById("pEmblem")
+        .textContent =
+        state.emblem || "None";
+
+
+      document.getElementById("pBanner")
+        .textContent =
+        state.banner || "None";
+
+
+      document.getElementById("pBackground")
+        .textContent =
+        state.background || "Default";
+
+
+      let idx =
+        ranks.findIndex(
+          x => x[0] === rank
+        );
+
+      let next = ranks[idx + 1];
+
+
+      if (next) {
+
+        document.getElementById("rankbar")
+          .style.width =
+          Math.min(
+            100,
+            (
+              (state.xp - ranks[idx][1]) /
+              (next[1] - ranks[idx][1])
+            ) * 100
+          ) + "%";
+
+      }
+
+      else {
+
+        document.getElementById("rankbar")
+          .style.width = "100%";
+
+      }
+
+
+      document.getElementById("xpbar")
+        .style.width =
+        Math.min(
+          100,
+          state.xp % 100
+        ) + "%";
+
+    }
+
+
+    /* =========================
+       TOAST
+    ========================= */
+
+    function toast(text) {
+
+      const e =
+        document.getElementById("toast");
+
+      e.textContent = text;
+
+      e.style.display = "block";
+
+      setTimeout(function () {
+
+        e.style.display = "none";
+
+      }, 1800);
+
+    }
+
+
+    /* =========================
+       START QUIZ
+    ========================= */
+
+    function startQuiz() {
+
+      currentLevel = state.level;
+
+      currentQ = 0;
+
+      score = 0;
+
+
+      sessionQuestions =
+        Array.from(
+          { length: 5 },
+          function (_, i) {
+
+            return [
+              ...questions[
+              (currentLevel - 1 + i)
+              % questions.length
+              ]
+            ];
+
+          }
+        );
+
+
+      showPage("quiz");
+
+      renderQuestion();
+
+    }
+
+
+    /* =========================
+       TIMER
+    ========================= */
+
+    function startTimer() {
+
+      clearInterval(timerInterval);
+
+      timeLeft = 30;
+
+
+      if (
+        state.effects["Extra Time Effect"] &&
+        state.owned["Extra Time"] > 0
+      ) {
+
+        timeLeft += 10;
+
+      }
+
+
+      document.getElementById("timer")
+        .textContent = timeLeft;
+
+
+      timerInterval =
+        setInterval(function () {
+
+          timeLeft--;
+
+          document.getElementById("timer")
+            .textContent = timeLeft;
+
+
+          if (timeLeft <= 0) {
+
+            clearInterval(timerInterval);
+
+            if (!questionAnswered) {
+
+              questionAnswered = true;
+
+              document.querySelectorAll(".answer")
+                .forEach(b =>
+                  b.disabled = true
+                );
+
+
+              if (
+                state.shield &&
+                state.effects["Shield Effect"]
+              ) {
+
+                state.shield = false;
+
+                toast(
+                  "Shield saved you!"
+                );
+
+              }
+
+              else if (
+                state.secondChance &&
+                state.effects["Second Chance Effect"]
+              ) {
+
+                state.secondChance = false;
+
+                toast(
+                  "Second Chance saved you!"
+                );
+
+              }
+
+              else {
+
+                toast(
+                  "Time is over!"
+                );
+
+              }
+
+
+              document.getElementById("nextBtn")
+                .classList.remove("hidden");
+
+            }
+
+          }
+
+        }, 1000);
+
+    }
+
+
+    /* =========================
+       RENDER QUESTION
+    ========================= */
+
+    function renderQuestion() {
+
+      clearInterval(timerInterval);
+
+      questionAnswered = false;
+
+
+      const q =
+        sessionQuestions[currentQ];
+
+
+      document.getElementById("qLevel")
+        .textContent =
+        "Level " +
+        currentLevel +
+        " • Question " +
+        (currentQ + 1) +
+        "/5";
+
+
+      document.getElementById("qbar")
+        .style.width =
+        (currentQ / 5 * 100) + "%";
+
+
+      document.getElementById("question")
+        .textContent =
+        q[0];
+
+
+      const answers = [
+        q[1],
+        q[2],
+        q[3],
+        q[4]
+      ];
+
+
+      answers.sort(
+        () => Math.random() - .5
+      );
+
+
+      const box =
+        document.getElementById("answers");
+
+
+      box.innerHTML = "";
+
+
+      answers.forEach(function (a) {
+
+        const b =
+          document.createElement("button");
+
+        b.className = "answer";
+
+        b.textContent = a;
+
+        b.onclick =
+          () => answer(
+            b,
+            a,
+            q[1]
+          );
+
+        box.appendChild(b);
+
+      });
+
+
+      document.getElementById("feedback")
+        .classList.add("hidden");
+
+
+      document.getElementById("nextBtn")
+        .classList.add("hidden");
+
+
+      renderHelpButtons();
+
+      startTimer();
+
+    }
+
+
+    /* =========================
+       ANSWER
+    ========================= */
+
+    function answer(
+      btn,
+      chosen,
+      correct
+    ) {
+
+      if (questionAnswered)
+        return;
+
+
+      questionAnswered = true;
+
+      clearInterval(timerInterval);
+
+
+      document.querySelectorAll(".answer")
+        .forEach(b =>
+          b.disabled = true
+        );
+
+
+      if (chosen === correct) {
+
+        btn.classList.add("correct");
+
+        score++;
+
+        state.coins += 15;
+
+        toast("+15 coins");
+
+      }
+
+      else {
+
+        btn.classList.add("wrong");
+
+
+        if (
+          state.shield &&
+          state.effects["Shield Effect"]
+        ) {
+
+          state.shield = false;
+
+          toast(
+            "Shield protected you!"
+          );
+
+        }
+
+        else if (
+          state.secondChance &&
+          state.effects["Second Chance Effect"]
+        ) {
+
+          state.secondChance = false;
+
+          toast(
+            "Second Chance protected you!"
+          );
+
+        }
+
+        else {
+
+          document.querySelectorAll(".answer")
+            .forEach(b => {
+
+              if (b.textContent === correct) {
+
+                b.classList.add("correct");
+
+              }
+
+            });
+
+        }
+
+      }
+
+
+      const f =
+        document.getElementById("feedback");
+
+
+      f.classList.remove("hidden");
+
+
+      f.textContent =
+        chosen === correct
+
+          ? "Correct! +15 coins"
+
+          : "Wrong answer. Correct answer: "
+          + correct;
+
+
+      document.getElementById("nextBtn")
+        .classList.remove("hidden");
+
+
+      save();
+
+    }
+
+
+    /* =========================
+       NEXT
+    ========================= */
+
+    function nextQuestion() {
+
+      clearInterval(timerInterval);
+
+      currentQ++;
+
+
+      if (currentQ < 5) {
+
+        renderQuestion();
+
+      }
+
+      else {
+
+        finishLevel();
+
+      }
+
+    }
+
+
+    /* =========================
+       EXIT
+    ========================= */
+
+    function exitQuiz() {
+
+      clearInterval(timerInterval);
+
+      showPage("home");
+
+    }
+
+
+    /* =========================
+       FINISH LEVEL
+    ========================= */
+
+    function finishLevel() {
+
+      clearInterval(timerInterval);
+
+
+      const bonus =
+        50 + score * 20;
+
+
+      const xpReward =
+        100 + score * 20;
+
+
+      state.coins += bonus;
+
+      state.xp += xpReward;
+
+
+      state.completed =
+        Math.max(
+          state.completed,
+          currentLevel
+        );
+
+
+      if (
+        currentLevel === state.level &&
+        state.level < 100
+      ) {
+
+        state.level++;
+
+      }
+
+
+      if (state.level > 100)
+        state.level = 100;
+
+
+      save();
+
+
+      document.getElementById("question")
+        .textContent =
+        "LEVEL COMPLETE!";
+
+
+      document.getElementById("answers")
+        .innerHTML = `
+
+            <div class="card">
+
+                <h2>
+                    Score: ${score}/5
+                </h2>
+
+                <p>
+                    You earned ${bonus} bonus coins.
+                </p>
+
+                <p>
+                    You earned ${xpReward} XP.
+                </p>
+
+                <p class="muted">
+                    Current rank:
+                    ${getRank()}
+                </p>
+
+            </div>
+
+        `;
+
+
+      document.getElementById("feedback")
+        .classList.add("hidden");
+
+
+      document.getElementById("nextBtn")
+        .classList.add("hidden");
+
+
+      document.getElementById("qbar")
+        .style.width = "100%";
+
+
+      setTimeout(function () {
+
+        showPage("levels");
+
+      }, 1200);
+
+    }
+
+
+    /* =========================
+       LEVELS
+    ========================= */
+
+    function renderLevels() {
+
+      const g =
+        document.getElementById("levelGrid");
+
+      g.innerHTML = "";
+
+
+      for (
+        let i = 1;
+        i <= 100;
+        i++
+      ) {
+
+        const d =
+          document.createElement("div");
+
+
+        d.className =
+          "level " +
+
+          (
+            i <= state.completed
+              ? "done "
+              : ""
+          ) +
+
+          (
+            i === state.level
+              ? "current"
+              : ""
+          );
+
+
+        d.innerHTML =
+
+          (
+            i <= state.completed
+              ? "✓ "
+              : ""
+          ) +
+
+          (
+            i === state.level
+              ? "⭐ "
+              : ""
+          ) +
+
+          "Level " + i;
+
+
+        d.onclick = function () {
+
+          if (i <= state.level) {
+
+            startSpecificLevel(i);
+
+          }
+
+          else {
+
+            toast(
+              "Complete previous levels first!"
+            );
+
+          }
+
+        };
+
+
+        g.appendChild(d);
+
+      }
+
+    }
+
+
+    function startSpecificLevel(l) {
+
+      currentLevel = l;
+
+      currentQ = 0;
+
+      score = 0;
+
+
+      sessionQuestions =
+        Array.from(
+          { length: 5 },
+          function (_, i) {
+
+            return [
+              ...questions[
+              (l - 1 + i)
+              % questions.length
+              ]
+            ];
+
+          }
+        );
+
+
+      showPage("quiz");
+
+      renderQuestion();
+
+    }
+
+
+    /* =========================
+       SHOP
+    ========================= */
+
+    function renderShop() {
+
+      const g =
+        document.getElementById("shopGrid");
+
+      g.innerHTML = "";
+
+
+      itemNames.forEach(
+        function (name, i) {
+
+          const price =
+            50 +
+            (i % 12) * 50 +
+            Math.floor(i / 20) * 50;
+
+
+          const owned =
+            state.owned[name] || 0;
+
+
+          const d =
+            document.createElement("div");
+
+
+          d.className = "item";
+
+
+          d.innerHTML = `
+
+                <div class="item-icon">
+                    ${icons[i % icons.length]}
+                </div>
+
+                <h3>
+                    ${name}
+                </h3>
+
+                <div class="price">
+                    Coins: ${price}
+                </div>
+
+                <div class="owned">
+                    Owned: ${owned}
+                </div>
+
+            `;
+
+
+          const b =
+            document.createElement("button");
+
+
+          b.className = "shop-btn";
+
+          b.textContent = "Buy";
+
+
+          b.disabled =
+            state.coins < price;
+
+
+          b.onclick =
+            () => buyItem(
+              name,
+              price
+            );
+
+
+          d.appendChild(b);
+
+          g.appendChild(d);
+
+        }
+      );
+
+    }
+
+
+    /* =========================
+       BUY
+    ========================= */
+
+    function buyItem(
+      name,
+      price
+    ) {
+
+      if (state.coins < price) {
+
+        toast(
+          "Not enough coins!"
+        );
+
+        return;
+
+      }
+
+
+      state.coins -= price;
+
+
+      state.owned[name] =
+        (state.owned[name] || 0) + 1;
+
+
+      state.inventory.push(name);
+
+
+      save();
+
+
+      toast(
+        name + " purchased!"
+      );
+
+
+      renderShop();
+
+      renderHelpButtons();
+
+    }
+
+
+    /* =========================
+       HELP BUTTONS
+    ========================= */
+
+    function renderHelpButtons() {
+
+      const box =
+        document.getElementById(
+          "helpButtons"
+        );
+
+
+      box.innerHTML = "";
+
+
+      const helpItems = [
+
+        "Hint Card",
+        "50/50 Card",
+        "Skip Question",
+        "Extra Time",
+        "Reveal Answer",
+        "Remove One Answer",
+        "Second Chance",
+        "Freeze Timer",
+        "Question Swap",
+        "Smart Hint",
+        "Expert Help",
+        "Brain Boost",
+        "Answer Shield",
+        "Rescue Card",
+        "Master Hint",
+        "Perfect Chance",
+        "Last Chance",
+        "Skip Card"
+
+      ];
+
+
+      helpItems.forEach(
+        function (name) {
+
+          const count =
+            state.owned[name] || 0;
+
+
+          if (
+            count > 0 &&
+            isHelpEffectEnabled(name)
+          ) {
+
+            const b =
+              document.createElement("button");
+
+
+            b.textContent =
+              name +
+              " (" +
+              count +
+              ")";
+
+
+            b.onclick = function () {
+
+              const index =
+                state.inventory.indexOf(
+                  name
+                );
+
+
+              if (index !== -1) {
+
+                useItem(
+                  name,
+                  index
+                );
+
+              }
+
+            };
+
+
+            box.appendChild(b);
+
+          }
+
+        }
+      );
+
+
+      if (!box.children.length) {
+
+        box.innerHTML =
+          "<span class='muted'>" +
+          "Buy question-help items from the shop." +
+          "</span>";
+
+      }
+
+    }
+
+
+    function isHelpEffectEnabled(name) {
+
+      if (
+        name === "Hint Card" ||
+        name === "Smart Hint" ||
+        name === "Master Hint"
+      ) {
+        return state.effects["Hint Effect"];
+      }
+
+
+      if (
+        name === "50/50 Card"
+      ) {
+        return state.effects["50/50 Effect"];
+      }
+
+
+      if (
+        name === "Skip Question" ||
+        name === "Skip Card"
+      ) {
+        return state.effects["Skip Effect"];
+      }
+
+
+      if (
+        name === "Extra Time" ||
+        name === "Speed Card"
+      ) {
+        return state.effects["Extra Time Effect"];
+      }
+
+
+      if (
+        name === "Reveal Answer"
+      ) {
+        return state.effects["Reveal Answer Effect"];
+      }
+
+
+      if (
+        name === "Remove One Answer"
+      ) {
+        return state.effects["Remove Answer Effect"];
+      }
+
+
+      if (
+        name === "Second Chance" ||
+        name === "Rescue Card" ||
+        name === "Perfect Chance" ||
+        name === "Last Chance"
+      ) {
+        return state.effects["Second Chance Effect"];
+      }
+
+
+      if (
+        name === "Shield" ||
+        name === "Answer Shield" ||
+        name === "Defense Card"
+      ) {
+        return state.effects["Shield Effect"];
+      }
+
+
+      if (
+        name === "Freeze Timer"
+      ) {
+        return state.effects["Freeze Timer Effect"];
+      }
+
+
+      if (
+        name === "Question Swap"
+      ) {
+        return state.effects["Question Swap Effect"];
+      }
+
+
+      return true;
+
+    }
+
+
+    /* =========================
+       USE ITEM
+    ========================= */
+
+    function useItem(
+      name,
+      index
+    ) {
+
+      if (
+        !state.owned[name] ||
+        state.owned[name] <= 0
+      ) {
+        return;
+      }
+
+
+      /* QUESTION HELP */
+
+
+      if (name === "Hint Card") {
+
+        toast(
+          "Hint: Think carefully about the question."
+        );
+
+      }
+
+
+      else if (
+        name === "50/50 Card"
+      ) {
+
+        const buttons =
+          document.querySelectorAll(
+            ".answer"
+          );
+
+
+        const correct =
+          sessionQuestions[currentQ][1];
+
+
+        let removed = 0;
+
+
+        buttons.forEach(
+          function (b) {
+
+            if (
+              b.textContent !== correct &&
+              removed < 2
+            ) {
+
+              b.style.display = "none";
+
+              removed++;
+
+            }
+
+          }
+        );
+
+
+        toast(
+          "50/50 activated!"
+        );
+
+      }
+
+
+      else if (
+        name === "Skip Question" ||
+        name === "Skip Card"
+      ) {
+
+        removeItem(name, index);
+
+        toast(
+          "Question skipped!"
+        );
+
+        setTimeout(
+          nextQuestion,
+          300
+        );
+
+        return;
+
+      }
+
+
+      else if (
+        name === "Extra Time" ||
+        name === "Speed Card"
+      ) {
+
+        timeLeft +=
+          name === "Speed Card"
+            ? 45
+            : 20;
+
+
+        toast(
+          "+" +
+          (
+            name === "Speed Card"
+              ? 45
+              : 20
+          ) +
+          " seconds!"
+        );
+
+      }
+
+
+      else if (
+        name === "Reveal Answer"
+      ) {
+
+        const correct =
+          sessionQuestions[currentQ][1];
+
+
+        document.querySelectorAll(".answer")
+          .forEach(
+            function (b) {
+
+              if (
+                b.textContent === correct
+              ) {
+
+                b.classList.add(
+                  "correct"
+                );
+
+              }
+
+            }
+          );
+
+
+        toast(
+          "Correct answer revealed!"
+        );
+
+      }
+
+
+      else if (
+        name === "Remove One Answer"
+      ) {
+
+        const correct =
+          sessionQuestions[currentQ][1];
+
+
+        const buttons =
+          document.querySelectorAll(
+            ".answer"
+          );
+
+
+        for (
+          const b of buttons
+        ) {
+
+          if (
+            b.textContent !== correct &&
+            b.style.display !== "none"
+          ) {
+
+            b.style.display = "none";
+
+            break;
+
+          }
+
+        }
+
+
+        toast(
+          "One answer removed!"
+        );
+
+      }
+
+
+      else if (
+        name === "Second Chance" ||
+        name === "Rescue Card" ||
+        name === "Last Chance"
+      ) {
+
+        state.secondChance = true;
+
+        toast(
+          "Second Chance activated!"
+        );
+
+      }
+
+
+      else if (
+        name === "Shield" ||
+        name === "Answer Shield" ||
+        name === "Defense Card"
+      ) {
+
+        state.shield = true;
+
+        toast(
+          "Shield activated!"
+        );
+
+      }
+
+
+      else if (
+        name === "Freeze Timer"
+      ) {
+
+        timeLeft += 30;
+
+        toast(
+          "+30 seconds!"
+        );
+
+      }
+
+
+      else if (
+        name === "Question Swap"
+      ) {
+
+        removeItem(name, index);
+
+        toast(
+          "Question changed!"
+        );
+
+        setTimeout(
+          nextQuestion,
+          300
+        );
+
+        return;
+
+      }
+
+
+      else if (
+        name === "Smart Hint"
+      ) {
+
+        toast(
+          "Hint: Read every answer carefully."
+        );
+
+      }
+
+
+      else if (
+        name === "Expert Help"
+      ) {
+
+        state.coins += 50;
+
+        toast(
+          "+50 coins!"
+        );
+
+      }
+
+
+      else if (
+        name === "Brain Boost"
+      ) {
+
+        state.xp += 100;
+
+        toast(
+          "+100 XP!"
+        );
+
+      }
+
+
+      else if (
+        name === "Master Hint"
+      ) {
+
+        toast(
+          "Master Hint: Look for the answer that directly matches the question."
+        );
+
+      }
+
+
+      else if (
+        name === "Perfect Chance"
+      ) {
+
+        state.secondChance = true;
+
+        state.xp += 50;
+
+        toast(
+          "Perfect Chance! +50 XP"
+        );
+
+      }
+
+
+      /* COINS / XP */
+
+
+      else if (
+        name === "Coin Boost"
+      ) {
+
+        state.coins += 100;
+
+        toast(
+          "+100 coins!"
+        );
+
+      }
+
+
+      else if (
+        name === "XP Boost"
+      ) {
+
+        state.xp += 100;
+
+        toast(
+          "+100 XP!"
+        );
+
+      }
+
+
+      else if (
+        name === "Energy Drink"
+      ) {
+
+        state.xp += 50;
+
+        toast(
+          "+50 XP!"
+        );
+
+      }
+
+
+      else if (
+        name === "Lucky Token" ||
+        name === "Lucky Card"
+      ) {
+
+        const reward =
+          Math.floor(
+            Math.random() * 451
+          ) + 50;
+
+
+        state.coins += reward;
+
+
+        toast(
+          "Lucky! +" +
+          reward +
+          " coins!"
+        );
+
+      }
+
+
+      else if (
+        name === "Double Coin Card"
+      ) {
+
+        state.coins += 200;
+
+        toast(
+          "+200 coins!"
+        );
+
+      }
+
+
+      else if (
+        name === "Triple Coin Card"
+      ) {
+
+        state.coins += 300;
+
+        toast(
+          "+300 coins!"
+        );
+
+      }
+
+
+      else if (
+        name === "Double XP Card"
+      ) {
+
+        state.xp += 200;
+
+        toast(
+          "+200 XP!"
+        );
+
+      }
+
+
+      else if (
+        name === "Power Card"
+      ) {
+
+        state.xp += 150;
+
+        toast(
+          "+150 XP!"
+        );
+
+      }
+
+
+      else if (
+        name === "Focus Card"
+      ) {
+
+        state.xp += 125;
+
+        toast(
+          "+125 XP!"
+        );
+
+      }
+
+
+      else if (
+        name === "Wisdom Card"
+      ) {
+
+        state.xp += 175;
+
+        toast(
+          "+175 XP!"
+        );
+
+      }
+
+
+      /* BOXES */
+
+
+      else if (
+        name === "Mystery Box"
+      ) {
+
+        const rewards = [
+          "coins",
+          "xp",
+          "item"
+        ];
+
+
+        const reward =
+          rewards[
+          Math.floor(
+            Math.random() *
+            rewards.length
+          )
+          ];
+
+
+        if (reward === "coins") {
+
+          const amount =
+            Math.floor(
+              Math.random() * 501
+            ) + 100;
+
+
+          state.coins += amount;
+
+
+          toast(
+            "Mystery Box: +" +
+            amount +
+            " coins!"
+          );
+
+        }
+
+
+        else if (reward === "xp") {
+
+          const amount =
+            Math.floor(
+              Math.random() * 301
+            ) + 100;
+
+
+          state.xp += amount;
+
+
+          toast(
+            "Mystery Box: +" +
+            amount +
+            " XP!"
+          );
+
+        }
+
+
+        else {
+
+          const possible = [
+
+            "Lucky Token",
+            "XP Boost",
+            "Coin Boost",
+            "Energy Drink",
+            "Power Card",
+            "Shield"
+
+          ];
+
+
+          const item =
+            possible[
+            Math.floor(
+              Math.random() *
+              possible.length
+            )
+            ];
+
+
+          state.inventory.push(item);
+
+
+          state.owned[item] =
+            (state.owned[item] || 0) + 1;
+
+
+          toast(
+            "Mystery Box gave: " +
+            item
+          );
+
+        }
+
+      }
+
+
+      else if (
+        name.includes("Chest") ||
+        name.includes("Crate")
+      ) {
+
+        let coins = 100;
+
+        let xp = 50;
+
+
+        if (name.includes("Medium")) {
+          coins = 250;
+          xp = 100;
+        }
+
+        if (name.includes("Large")) {
+          coins = 500;
+          xp = 200;
+        }
+
+        if (name.includes("Royal")) {
+          coins = 750;
+          xp = 300;
+        }
+
+        if (name.includes("Epic")) {
+          coins = 1000;
+          xp = 400;
+        }
+
+        if (name.includes("Legend")) {
+          coins = 2000;
+          xp = 700;
+        }
+
+        if (name.includes("Mega")) {
+          coins = 1500;
+          xp = 500;
+        }
+
+        if (name.includes("Ultra")) {
+          coins = 2500;
+          xp = 800;
+        }
+
+        if (name.includes("Diamond")) {
+          coins = 5000;
+          xp = 1500;
+        }
+
+
+        state.coins += coins;
+
+        state.xp += xp;
+
+
+        toast(
+          name +
+          ": +" +
+          coins +
+          " coins, +" +
+          xp +
+          " XP!"
+        );
+
+      }
+
+
+      /* AVATAR */
+
+
+      else if (
+        name.includes("Avatar")
+      ) {
+
+        state.avatar = name;
+
+        toast(
+          "Avatar equipped!"
+        );
+
+      }
+
+
+      /* FRAME */
+
+
+      else if (
+        name.includes("Frame")
+      ) {
+
+        state.frame = name;
+
+        toast(
+          "Frame equipped!"
+        );
+
+      }
+
+
+      /* TITLE */
+
+
+      else if (
+        name.includes("Title")
+      ) {
+
+        state.title = name;
+
+        toast(
+          "Title equipped!"
+        );
+
+      }
+
+
+      /* CROWN */
+
+
+      else if (
+        name.includes("Crown")
+      ) {
+
+        state.crown = name;
+
+        toast(
+          "Crown equipped!"
+        );
+
+      }
+
+
+      /* BADGE */
+
+
+      else if (
+        name.includes("Badge")
+      ) {
+
+        if (
+          !state.badges.includes(name)
+        ) {
+
+          state.badges.push(name);
+
+        }
+
+        toast(
+          "Badge unlocked!"
+        );
+
+      }
+
+
+      /* MEDAL */
+
+
+      else if (
+        name.includes("Medal")
+      ) {
+
+        if (
+          !state.medals.includes(name)
+        ) {
+
+          state.medals.push(name);
+
+        }
+
+        state.xp += 100;
+
+        toast(
+          "Medal unlocked! +100 XP"
+        );
+
+      }
+
+
+      /* PET */
+
+
+      else if (
+        name.includes("Pet")
+      ) {
+
+        if (
+          !state.pets.includes(name)
+        ) {
+
+          state.pets.push(name);
+
+        }
+
+        state.xp += 50;
+
+        toast(
+          name +
+          " activated! +50 XP"
+        );
+
+      }
+
+
+      /* EMBLEM */
+
+
+      else if (
+        name.includes("Emblem")
+      ) {
+
+        state.emblem = name;
+
+        state.xp += 75;
+
+        toast(
+          name +
+          " activated! +75 XP"
+        );
+
+      }
+
+
+      /* BANNER */
+
+
+      else if (
+        name.includes("Banner")
+      ) {
+
+        state.banner = name;
+
+        toast(
+          "Banner equipped!"
+        );
+
+      }
+
+
+      /* BACKGROUND */
+
+
+      else if (
+        name.includes("Background")
+      ) {
+
+        applyBackground(name);
+
+        state.background = name;
+
+        toast(
+          "Background changed!"
+        );
+
+      }
+
+
+      /* PATTERN */
+
+
+      else if (
+        name.includes("Pattern")
+      ) {
+
+        applyPattern(name);
+
+        state.background = name;
+
+        toast(
+          "Pattern changed!"
+        );
+
+      }
+
+
+      /* THEME */
+
+
+      else if (
+        name.includes("Theme")
+      ) {
+
+        applyTheme(name);
+
+        state.background = name;
+
+        toast(
+          "Theme changed!"
+        );
+
+      }
+
+
+      /* KEYS */
+
+
+      else if (
+        name === "Golden Key"
+      ) {
+
+        state.coins += 500;
+
+        toast(
+          "Golden Key: +500 coins!"
+        );
+
+      }
+
+
+      else if (
+        name === "Magic Key"
+      ) {
+
+        state.xp += 300;
+
+        toast(
+          "Magic Key: +300 XP!"
+        );
+
+      }
+
+
+      else if (
+        name === "Battle Ticket"
+      ) {
+
+        state.coins += 250;
+
+        state.xp += 150;
+
+        toast(
+          "Battle Ticket reward!"
+        );
+
+      }
+
+
+      else {
+
+        state.xp += 25;
+
+        toast(
+          name +
+          " used! +25 XP"
+        );
+
+      }
+
+
+      removeItem(
+        name,
+        index
+      );
+
+    }
+
+
+    /* =========================
+       REMOVE ITEM
+    ========================= */
+
+    function removeItem(
+      name,
+      index
+    ) {
+
+      if (
+        state.owned[name] > 0
+      ) {
+
+        state.owned[name]--;
+
+      }
+
+
+      state.inventory.splice(
+        index,
+        1
+      );
+
+
+      save();
+
+      renderProfile();
+
+      renderHelpButtons();
+
+    }
+
+
+    /* =========================
+       BACKGROUNDS
+    ========================= */
+
+    const backgrounds = {
+
+      "Galaxy Background":
+        "radial-gradient(circle at center,#32145f,#080014 70%)",
+
+      "Space Background":
+        "linear-gradient(135deg,#020024,#090979,#000)",
+
+      "Neon Background":
+        "linear-gradient(135deg,#12002b,#003c52,#050505)",
+
+      "Fire Background":
+        "linear-gradient(135deg,#4a0000,#ff4500,#120000)",
+
+      "Ice Background":
+        "linear-gradient(135deg,#001d35,#00aaff,#02111f)",
+
+      "Ocean Background":
+        "linear-gradient(135deg,#003b5c,#0077b6,#001f33)",
+
+      "Forest Background":
+        "linear-gradient(135deg,#092e16,#1b5e20,#001005)",
+
+      "Sunset Background":
+        "linear-gradient(135deg,#ff512f,#dd2476,#240046)",
+
+      "Night Background":
+        "linear-gradient(135deg,#020617,#111827,#000)",
+
+      "Stars Background":
+        "radial-gradient(circle,#ffffff 1px,transparent 1px),#050816",
+
+      "Cyber Background":
+        "linear-gradient(135deg,#001219,#005f73,#0a9396)",
+
+      "Royal Background":
+        "linear-gradient(135deg,#1e0038,#5b21b6,#09001a)",
+
+      "Diamond Background":
+        "linear-gradient(135deg,#0f172a,#38bdf8,#e0f2fe)"
+
+    };
+
+
+    function applyBackground(name) {
+
+      if (backgrounds[name]) {
+
+        document.body.style.background =
+          backgrounds[name];
+
+      }
+
+    }
+
+
+    /* =========================
+       PATTERNS
+    ========================= */
+
+    const patterns = {
+
+      "Purple Pattern":
+        "repeating-linear-gradient(45deg,#240046 0,#240046 10px,#3c096c 10px,#3c096c 20px)",
+
+      "Blue Pattern":
+        "repeating-linear-gradient(45deg,#001f3f 0,#001f3f 10px,#003566 10px,#003566 20px)",
+
+      "Red Pattern":
+        "repeating-linear-gradient(45deg,#3b0000 0,#3b0000 10px,#7f1d1d 10px,#7f1d1d 20px)",
+
+      "Green Pattern":
+        "repeating-linear-gradient(45deg,#052e16 0,#052e16 10px,#166534 10px,#166534 20px)",
+
+      "Rainbow Pattern":
+        "linear-gradient(135deg,#ef4444,#f59e0b,#22c55e,#3b82f6,#8b5cf6)",
+
+      "Dark Pattern":
+        "repeating-linear-gradient(135deg,#050505 0,#050505 12px,#111827 12px,#111827 24px)"
+
+    };
+
+
+    function applyPattern(name) {
+
+      if (patterns[name]) {
+
+        document.body.style.background =
+          patterns[name];
+
+      }
+
+    }
+
+
+    /* =========================
+       THEMES
+    ========================= */
+
+    const themes = {
+
+      "Golden Theme":
+        "linear-gradient(135deg,#1c1400,#5c4300,#000)",
+
+      "Legend Theme":
+        "radial-gradient(circle,#4c1d95,#090014)",
+
+      "Royal Theme":
+        "linear-gradient(135deg,#240046,#7b2cbf,#10002b)",
+
+      "Dragon Theme":
+        "linear-gradient(135deg,#260000,#8b0000,#050000)",
+
+      "Phoenix Theme":
+        "linear-gradient(135deg,#7c2d12,#ea580c,#1c0700)",
+
+      "Lightning Theme":
+        "linear-gradient(135deg,#172554,#2563eb,#020617)",
+
+      "Shadow Theme":
+        "linear-gradient(135deg,#000,#111,#000)",
+
+      "Crystal Theme":
+        "linear-gradient(135deg,#164e63,#06b6d4,#cffafe)",
+
+      "Cyber Theme":
+        "linear-gradient(135deg,#001219,#00ff9d,#001219)",
+
+      "Ultimate Theme":
+        "linear-gradient(135deg,#000,#7c3aed,#000,#06b6d4)"
+
+    };
+
+
+    function applyTheme(name) {
+
+      if (themes[name]) {
+
+        document.body.style.background =
+          themes[name];
+
+      }
+
+    }
+
+
+    /* =========================
+       PROFILE
+    ========================= */
+
+    function renderProfile() {
+
+      const box =
+        document.getElementById(
+          "inventory"
+        );
+
+
+      box.innerHTML = "";
+
+
+      if (
+        !state.inventory.length
+      ) {
+
+        box.innerHTML =
+          "<span class='muted'>" +
+          "Inventory is empty." +
+          "</span>";
+
+        return;
+
+      }
+
+
+      state.inventory.forEach(
+        function (name, index) {
+
+          const b =
+            document.createElement(
+              "button"
+            );
+
+
+          b.className = "tag";
+
+
+          b.textContent =
+            name +
+            " × Use";
+
+
+          b.onclick =
+            () => useItem(
+              name,
+              index
+            );
+
+
+          box.appendChild(b);
+
+        }
+      );
+
+    }
+
+
+    /* =========================
+       EFFECTS WINDOW
+    ========================= */
+
+    function openEffects() {
+
+      document
+        .getElementById(
+          "effectsWindow"
+        )
+        .classList.remove("hidden");
+
+
+      renderEffects();
+
+    }
+
+
+    function closeEffects() {
+
+      document
+        .getElementById(
+          "effectsWindow"
+        )
+        .classList.add("hidden");
+
+    }
+
+
+    function renderEffects() {
+
+      const box =
+        document.getElementById(
+          "effectsList"
+        );
+
+
+      box.innerHTML = "";
+
+
+      let active = 0;
+
+
+      effectNames.forEach(
+        function (effect) {
+
+          const enabled =
+            state.effects[effect] !== false;
+
+
+          if (enabled) {
+            active++;
+          }
+
+
+          const row =
+            document.createElement(
+              "div"
+            );
+
+
+          row.className =
+            "effect-row";
+
+
+          row.innerHTML = `
+
+                <div>
+
+                    <div class="effect-name">
+                        ${effect}
+                    </div>
+
+                    <div class="effect-status">
+                        ${enabled ? "ON" : "OFF"}
+                    </div>
+
+                </div>
+
+                <button
+                    class="toggle ${enabled ? "on" : ""}"
+                    onclick="toggleEffect('${effect}')">
+                </button>
+
+            `;
+
+
+          box.appendChild(row);
+
+        }
+      );
+
+
+      document.getElementById(
+        "effectCount"
+      ).textContent =
+        active +
+        " / " +
+        effectNames.length;
+
+
+    }
+
+
+    function toggleEffect(effect) {
+
+      state.effects[effect] =
+        !state.effects[effect];
+
+
+      save();
+
+      renderEffects();
+
+      renderHelpButtons();
+
+
+      toast(
+        effect +
+        (
+          state.effects[effect]
+            ? " ON"
+            : " OFF"
+        )
+      );
+
+    }
+
+
+    /* =========================
+       LOAD SAVED BACKGROUND
+    ========================= */
+
+    function loadSavedBackground() {
+
+      if (!state.background)
+        return;
+
+
+      if (
+        backgrounds[state.background]
+      ) {
+
+        applyBackground(
+          state.background
+        );
+
+        return;
+
+      }
+
+
+      if (
+        patterns[state.background]
+      ) {
+
+        applyPattern(
+          state.background
+        );
+
+        return;
+
+      }
+
+
+      if (
+        themes[state.background]
+      ) {
+
+        applyTheme(
+          state.background
+        );
+
+      }
+
+    }
+
+
+    /* =========================
+       START
+    ========================= */
+
+    loadSavedBackground();
+
+    renderShop();
+
+    renderLevels();
+
+    renderProfile();
+
+    updateUI();
+
+  </script>
+<a href="./effects.html"><button>Effect<button></a>
+</body>
+
+</html>

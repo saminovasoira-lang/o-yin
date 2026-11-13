@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Quiz Royale - Effects</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+
+            font-family: Arial, sans-serif;
+
+            min-height: 100vh;
+
+            color: white;
+
+            background:
+                radial-gradient(circle at top,
+                    #263b67,
+                    #111827 45%,
+                    #070b12);
+
+            padding: 25px;
+
+        }
+
+        .container {
+
+            max-width: 1000px;
+
+            margin: auto;
+
+        }
+
+        .top {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 15px;
+
+            flex-wrap: wrap;
+
+            margin-bottom: 25px;
+
+        }
+
+        h1 {
+
+            color: #facc15;
+
+            font-size: 34px;
+
+        }
+
+        .subtitle {
+
+            color: #94a3b8;
+
+            margin-top: 5px;
+
+        }
+
+        .coins {
+
+            background: #172033;
+
+            border: 1px solid #334155;
+
+            padding: 12px 18px;
+
+            border-radius: 12px;
+
+            font-weight: bold;
+
+        }
+
+        #coins {
+
+            color: #facc15;
+
+        }
+
+        .back {
+
+            display: inline-block;
+
+            text-decoration: none;
+
+            background: #334155;
+
+            color: white;
+
+            padding: 10px 15px;
+
+            border-radius: 9px;
+
+            margin-bottom: 20px;
+
+        }
+
+        .back:hover {
+
+            background: #475569;
+
+        }
+
+        .effects {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(auto-fill,
+                    minmax(230px, 1fr));
+
+            gap: 15px;
+
+        }
+
+        .effect {
+
+            background: #172033;
+
+            border: 1px solid #334155;
+
+            border-radius: 15px;
+
+            padding: 18px;
+
+            transition: .2s;
+
+        }
+
+        .effect:hover {
+
+            transform: translateY(-3px);
+
+            border-color: #facc15;
+
+        }
+
+        .icon {
+
+            font-size: 40px;
+
+            margin-bottom: 10px;
+
+        }
+
+        .effect h2 {
+
+            font-size: 19px;
+
+            margin-bottom: 8px;
+
+        }
+
+        .description {
+
+            color: #94a3b8;
+
+            min-height: 45px;
+
+            margin-bottom: 12px;
+
+        }
+
+        .price {
+
+            color: #facc15;
+
+            font-weight: bold;
+
+            margin-bottom: 12px;
+
+        }
+
+        .status {
+
+            color: #4ade80;
+
+            font-weight: bold;
+
+            margin-bottom: 12px;
+
+        }
+
+        button {
+
+            width: 100%;
+
+            border: 0;
+
+            border-radius: 9px;
+
+            padding: 11px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            color: white;
+
+            background: #334155;
+
+        }
+
+        button:hover {
+
+            background: #475569;
+
+        }
+
+        button.buy {
+
+            background: #eab308;
+
+            color: #111827;
+
+        }
+
+        button.buy:hover {
+
+            background: #facc15;
+
+        }
+
+        button.on {
+
+            background: #16a34a;
+
+        }
+
+        button.off {
+
+            background: #991b1b;
+
+        }
+
+        button:disabled {
+
+            opacity: .5;
+
+            cursor: not-allowed;
+
+        }
+
+        .message {
+
+            position: fixed;
+
+            right: 20px;
+
+            bottom: 20px;
+
+            background: #111827;
+
+            border: 1px solid #475569;
+
+            padding: 13px 17px;
+
+            border-radius: 10px;
+
+            display: none;
+
+        }
+
+        @media(max-width:600px) {
+
+            body {
+
+                padding: 15px;
+
+            }
+
+            h1 {
+
+                font-size: 27px;
+
+            }
+
+        }
+    </style>
+
+</head>
+
+
+<body>
+
+    <div class="container">
+
+
+        <a href="./index.html" class="back">
+            ← Back to Quiz Royale
+        </a>
+
+
+        <div class="top">
+
+            <div>
+
+                <h1>Effects</h1>
+
+                <p class="subtitle">
+                    Buy once and control your effects
+                </p>
+
+            </div>
+
+
+            <div class="coins">
+
+                Coins:
+                <span id="coins">0</span>
+
+            </div>
+
+        </div>
+
+
+        <div class="effects" id="effects"></div>
+
+
+    </div>
+
+
+    <div class="message" id="message"></div>
+
+
+    <script>
+
+        const SAVE_KEY = "quizRoyaleSave";
+
+
+        /* EFFECTS */
+
+        const effects = [
+
+            {
+                name: "Hint Effect",
+                icon: "💡",
+                price: 500,
+                description:
+                    "Allows you to use hint items."
+            },
+
+            {
+                name: "50/50 Effect",
+                icon: "✂️",
+                price: 700,
+                description:
+                    "Allows you to remove two wrong answers."
+            },
+
+            {
+                name: "Skip Effect",
+                icon: "⏭️",
+                price: 800,
+                description:
+                    "Allows you to skip questions."
+            },
+
+            {
+                name: "Extra Time Effect",
+                icon: "⏱️",
+                price: 600,
+                description:
+                    "Allows you to add extra time."
+            },
+
+            {
+                name: "Reveal Answer Effect",
+                icon: "👁️",
+                price: 1000,
+                description:
+                    "Allows you to reveal the correct answer."
+            },
+
+            {
+                name: "Remove Answer Effect",
+                icon: "❌",
+                price: 750,
+                description:
+                    "Allows you to remove one wrong answer."
+            },
+
+            {
+                name: "Second Chance Effect",
+                icon: "🔄",
+                price: 1200,
+                description:
+                    "Gives you another chance after a mistake."
+            },
+
+            {
+                name: "Shield Effect",
+                icon: "🛡️",
+                price: 1500,
+                description:
+                    "Protects you from a wrong answer."
+            },
+
+            {
+                name: "Freeze Timer Effect",
+                icon: "🧊",
+                price: 1300,
+                description:
+                    "Allows you to freeze the timer."
+            },
+
+            {
+                name: "Question Swap Effect",
+                icon: "🔀",
+                price: 1100,
+                description:
+                    "Allows you to change the current question."
+            },
+
+            {
+                name: "Coin Effect",
+                icon: "🪙",
+                price: 1000,
+                description:
+                    "Allows coin-related items to work."
+            },
+
+            {
+                name: "XP Effect",
+                icon: "⭐",
+                price: 1000,
+                description:
+                    "Allows XP-related items to work."
+            },
+
+            {
+                name: "Lucky Effect",
+                icon: "🍀",
+                price: 1400,
+                description:
+                    "Allows Lucky items to work."
+            },
+
+            {
+                name: "Mystery Box Effect",
+                icon: "🎁",
+                price: 1600,
+                description:
+                    "Allows Mystery Boxes to work."
+            },
+
+            {
+                name: "Chest Effect",
+                icon: "💎",
+                price: 1800,
+                description:
+                    "Allows chests and crates to work."
+            },
+
+            {
+                name: "Pet Effect",
+                icon: "🐉",
+                price: 2000,
+                description:
+                    "Allows your pets to work."
+            },
+
+            {
+                name: "Background Effect",
+                icon: "🌌",
+                price: 900,
+                description:
+                    "Allows background changes."
+            },
+
+            {
+                name: "Pattern Effect",
+                icon: "🎨",
+                price: 900,
+                description:
+                    "Allows pattern changes."
+            },
+
+            {
+                name: "Theme Effect",
+                icon: "✨",
+                price: 1200,
+                description:
+                    "Allows theme changes."
+            }
+
+        ];
+
+
+        /* LOAD SAVE */
+
+        function loadGame() {
+
+            let save =
+                localStorage.getItem(SAVE_KEY);
+
+            if (save) {
+
+                return JSON.parse(save);
+
+            }
+
+
+            return {
+
+                level: 1,
+
+                xp: 0,
+
+                coins: 100,
+
+                completed: 0,
+
+                inventory: [],
+
+                owned: {},
+
+                effects: {}
+
+            };
+
+        }
+
+
+        let state = loadGame();
+
+
+        /* FIX OLD SAVE */
+
+        if (!state.effects) {
+
+            state.effects = {};
+
+        }
+
+        if (!state.inventory) {
+
+            state.inventory = [];
+
+        }
+
+        if (!state.owned) {
+
+            state.owned = {};
+
+        }
+
+
+        /* SAVE */
+
+        function saveGame() {
+
+            localStorage.setItem(
+
+                SAVE_KEY,
+
+                JSON.stringify(state)
+
+            );
+
+        }
+
+
+        /* MESSAGE */
+
+        function message(text) {
+
+            const box =
+                document.getElementById("message");
+
+            box.textContent = text;
+
+            box.style.display = "block";
+
+
+            setTimeout(function () {
+
+                box.style.display = "none";
+
+            }, 1800);
+
+        }
+
+
+        /* COINS */
+
+        function updateCoins() {
+
+            document.getElementById("coins")
+                .textContent = state.coins;
+
+        }
+
+
+        /* BUY / TOGGLE */
+
+        function useEffect(index) {
+
+            const effect =
+                effects[index];
+
+            const name =
+                effect.name;
+
+
+            /*
+                ALREADY BOUGHT
+                -> just ON/OFF
+            */
+
+            if (
+                state.effects[name] !== undefined
+            ) {
+
+                state.effects[name] =
+                    !state.effects[name];
+
+
+                saveGame();
+
+                render();
+
+
+                message(
+
+                    name +
+                    (
+                        state.effects[name]
+                            ? " ON"
+                            : " OFF"
+                    )
+
+                );
+
+                return;
+
+            }
+
+
+            /*
+                BUY
+            */
+
+            if (state.coins < effect.price) {
+
+                message("Not enough coins!");
+
+                return;
+
+            }
+
+
+            state.coins -=
+                effect.price;
+
+
+            /*
+                EFFECT IS UNLOCKED
+                AND ON BY DEFAULT
+            */
+
+            state.effects[name] = true;
+
+
+            saveGame();
+
+            render();
+
+
+            message(
+                name + " unlocked!"
+            );
+
+        }
+
+
+        /* RENDER */
+
+        function render() {
+
+            const box =
+                document.getElementById("effects");
+
+            box.innerHTML = "";
+
+
+            effects.forEach(
+                function (effect, index) {
+
+
+                    const unlocked =
+                        state.effects[effect.name]
+                        !== undefined;
+
+
+                    const enabled =
+                        state.effects[effect.name]
+                        === true;
+
+
+                    const card =
+                        document.createElement("div");
+
+                    card.className =
+                        "effect";
+
+
+                    card.innerHTML = `
+
+                <div class="icon">
+                    ${effect.icon}
+                </div>
+
+                <h2>
+                    ${effect.name}
+                </h2>
+
+                <p class="description">
+                    ${effect.description}
+                </p>
+
+                ${unlocked
+
+                            ?
+
+                            `
+                    <div class="status">
+                        ${enabled ? "● ON" : "● OFF"}
+                    </div>
+
+                    <button
+                        class="${enabled ? "on" : "off"}"
+                        onclick="useEffect(${index})"
+                    >
+                        ${enabled ? "TURN OFF" : "TURN ON"}
+                    </button>
+                    `
+
+                            :
+
+                            `
+                    <div class="price">
+                        ${effect.price} Coins
+                    </div>
+
+                    <button
+                        class="buy"
+                        onclick="useEffect(${index})"
+                    >
+                        BUY ONCE
+                    </button>
+                    `
+                        }
+
+            `;
+
+
+                    box.appendChild(card);
+
+                }
+            );
+
+
+            updateCoins();
+
+        }
+
+
+        /* START */
+
+        render();
+
+    </script>
+<a href="./index (1).html"><button>Back</button></a>
+</body>
+
+</html>
